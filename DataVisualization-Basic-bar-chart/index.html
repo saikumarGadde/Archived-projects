@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+  .axis .domain {
+    display: none;
+  }
+  </style>
+  <script type="text/javascript" src="d3.js"></script>
+  <!-- <script src="https://d3js.org/d3.v4.min.js"></script> -->
+</head>
+
+<body>
+  <button onclick="myFunction('table201-01-Both.csv')"">Both Sexes</button>
+  <button onclick="myFunction('table201-01_Male.csv')">Male chart</button>
+  <button onclick="myFunction('table201-01-Female.csv')">Female chart</button>
+
+  <script>
+  
+	function myFunction (parameter1){
+
+	  d3.selectAll("svg").remove();
+
+	  console.log(parameter1);
+	  var canvasWidth = 1060;
+	  var canvasHeight = 500;
+
+	  var margin = {top: 20, right: 20, bottom: 100, left: 40};
+	  var width = canvasWidth - margin.left - margin.right;
+	  var height = canvasHeight - margin.top - margin.bottom;
+
+	  var svg = d3.select("body")
+	                .append("svg")
+	                .attr("width",canvasWidth)
+	                .attr("height",canvasHeight)
+	                .append("g")
+	                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+	  svg.select("body")
+	      .append("p")
+	      .text("Comparison of Population in different age groups with different degrees.");
+
+	  var xVariables = d3.scaleBand()
+	      .rangeRound([0, width])
+	      .paddingInner(0.1);
+
+	  var x1 = d3.scaleBand()
+	      .padding(0.05);
+
+	  var y = d3.scaleLinear()
+	      .rangeRound([height, 0]);
+
+	  var colorScale = d3.scaleOrdinal()
+	                    .range(["#98abc5", "#8a89a6", "#7b6888","#6b486b"]);
+
+	  d3.csv(parameter1, function(d, i, columns) {
+	  	console.log("Here is the parameter1"+parameter1);	
+	    for (var i = 1, n = columns.length; i < n; ++i) d[columns[i]] = +d[columns[i]];
+	    return d;
+	  	}, function(error, data) {
+	    
+	    if (error) throw error;
+
+	    var keys = data.columns.slice(1);
+	    console.log(keys);
+
+	    xVariables.domain(data.map(function(d) { return d.xvariable; }));
+	    x1.domain(keys).rangeRound([0, xVariables.bandwidth()]);
+	    // y.domain([0, d3.max(data, function(d) { return d3.max(keys, function(key) { return d[key]; }); })]).nice();
+	    y.domain([0, 7000]).nice();
+
+		svg.selectAll("g")
+	       .data(data)
+	       .enter().append("g")
+	        .attr("transform", function(d) { return "translate(" + xVariables(d.xvariable) + ",0)"; })
+	        .selectAll("rect")
+	        .data(function(d) { return keys.map(function(key) { return {key: key, value: d[key]}; }); })
+	        .enter()
+	        .append("rect")
+	        .attr("x", function(d) { return x1(d.key); })
+	        .attr("y", function(d) { return y(d.value); })
+	        .attr("width", x1.bandwidth())
+	        .transition().delay(function(d,i){return i*200;})
+	        .duration(300)
+	        .attr("height", function(d) { return height - y(d.value); })
+	        .attr("fill", function(d) { return colorScale(d.key); });
+
+	    svg.append("g")
+	        .attr("class", "axis")
+	        .attr("transform", "translate(0," + height + ")")
+	        .call(d3.axisBottom(xVariables))
+	        .selectAll("text")
+	        .attr("y",0)
+	        .attr("x",6)
+	        .attr("dy","0.01em")
+	        .attr("font-size","0.8em")
+	        .attr("transform","rotate(45)")
+	        .attr("text-anchor","start")
+	        ;
+
+	    svg.append("g")
+	        .attr("class", "axis")
+	        .call(d3.axisLeft(y).ticks(null, "s"))
+	        .append("text")
+	        .attr("x", 2)
+	        .attr("y", y(y.ticks().pop()) + 0.5)
+	        .attr("dy", "0.32em")
+	        .attr("fill", "#000")
+	        .attr("font-weight", "bold")
+	        .attr("text-anchor", "start")
+	        .text("Population");
+
+	    var legend = svg.append("g")
+	        .attr("font-family", "sans-serif")
+	        .attr("font-size", 10)
+	        .attr("text-anchor", "end")
+	        .selectAll("g")
+	        .data(keys.slice().reverse())
+	        .enter().append("g")
+	        .attr("transform", function(d, i) { return "translate(0," + i * 10 + ")"; });
+
+	    svg.append("text")
+	    	.attr("font-size","0.7em")
+	      .attr("font-weight","bold")
+	    	.attr("text-anchor","middle")
+	    	.attr("transform","translate("+ width/2 +","+ (canvasHeight-(margin.bottom/2)) +")")
+	    	.text("Age Groups");
+
+	    legend.append("rect")
+	        .attr("x", width - 19)
+	        .attr("width", 19)
+	        .attr("height", 19)
+	        .attr("fill", colorScale);
+
+	    legend.append("text")
+	        .attr("x", width - 24)
+	        .attr("y", 9.5)
+	        .attr("dy", "0.32em")
+	        .text(function(d) { return d; });
+	  });
+}
+  </script>
+</body>
+</html>
