@@ -1,0 +1,13 @@
+#### For the 10000 trials plot
+
+1. The files are in the folder -> 10000Trials
+2. Run this command for the SARSA file :-> ( python sarsa.py )
+3. Run this command for the Q_Learning file :-> ( python q_learning.py )
+
+
+
+#### For the Hyperparameter Optimization
+
+1. The files are in the folder -> Hyperparameter Optimization
+2. Run this command for the SARSA hyper parameter optimization :-> ( python sarsa.py )
+3. Run this command for the Q_Learning hyper parameter optimization :-> ( python q_learning.py )
