@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width = device-width, initial-scale = 1">
+    <title> Data Visualization Project </title>
+    <link rel="stylesheet" type="text/css" href="bootstrapNew.css">
+    <link rel="stylesheet" type="text/css" href="dc.css" />
+    <link rel="stylesheet" type="text/css" href="main.css" />
+    <!--<link rel="stylesheet" type="text/css" href="bootstrap.css" />-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+    <script src="usa.js"></script>
+</head>
+
+<body>
+    <div class="container-fluid" style="margin-left: 150px;margin-right: 150px;margin-top: 35px;margin-bottom: 50px;">
+        <div class="row topBar">
+            <div class="col-md-6">
+                <h1>Data Visualization Final Project</h1>
+            </div>
+            <div class="col-md-6">
+                <h3>Gadde Venkata Sai Kumar</h3>
+                <p style="font-size: 180%">Please set the resolution for the page to 50% so that the visualizations are in place.</p>
+            </div>
+            <div class="col-md-12" style="margin-bottom: 50px;">
+                <h1>Customer Care DashBoard</h1>
+            </div>
+        </div>
+
+        <div>
+            <hr>
+        </div>
+
+        <div>
+            <h1>Motivation</h1>
+            <p style="font-size: 175%">Customers drive businesses and customers insprie innovations. So, feedback from the customers in any form i.e complaints, praises or etc. is very important to understand what they need. So, customer complaints should be monitored well. Ther
+                are many tools which assists companies in customer care solutions. But, there is always dearth in the work force or the intention of the compnay to solve the problem. But according to the facts, most of the large companies can't solve
+                the major problems as they couldn't figure out the exact reason for the faults. In the year 2015, 67% of the customers have hung up phones out of frustration that they couldnot talk to a person
+                <span id="pietest2"> </span>.41 billion$ are lost every year by the companies due to the poor customer service. As the number of employees are limited and the kind of problems customers face are not limited,the problems can be classified
+                broadly. With the help of visualizations, the major problems in specific areas can be identified and the customer care personnel can be trained in specific issues so that the customers can receive better care from the company. In this
+                way there are many use cases, when companies try to visualize the data and understand the patterns and take informed decisions for customer care.
+            </p>
+            <p style="font-size: 175%"> </p>
+            <p style="font-size: 175%">This analysis can also be used to categorize the complaints. From the analysis or the visualizations below, we can observe that major number of complaints are in Mortagage, Debt Collection, Credit Reporting and Credit Card. So, Companies need
+                to concentrate upon these areas to better their services. So, this is the observation made by Forrester Researcher about how consumers expect a reply from the companies.
+                <span id="barChartSpark"></span>The plot shows the percentage of companies responding after time intervals 6 Hrs, 1 Day, 2 Days, 3 Days, 4 Days and Never.
+        </div>
+        <div>
+            <hr>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <h2>It takes 12 positive experiences to make up for one unresolved negative experience.</h2>
+                <p style="font-size: 175%">Lot of text comes here about the statistics of the customer care.</p>
+                <ul style="font-size: 175%">
+                    <p>The following are some important statistics for signyfying the importance of customer care.</p>
+                    <li>A typical business hears from 4% of its customers.</li>
+                    <li>5-20% probabibility of selling to a new customer. 60-70% probability of selling to an existing customer</li>
+                    <li>News of bad customer service reaches more than twice as many ears as praise for a good service experience. </li>
+                    <li>It is 6-7 times more expensive to acquire new customers than it is to keep a current customer.</li>
+                </ul>
+            </div>
+            <div>
+                <div id="chernoff" style="margin-top: 20px;"></div>
+                <p style="font-style: italic;">Source: 'Understanding Customers' by Ruby Newell-Legner</p>
+            </div>
+            <script>
+                d3.select("#chernoff")
+                    .append("svg:svg")
+                    .attr("width", 560)
+                    .attr("height", 250)
+                    .attr("id", "charts")
+                    .on("load", clickypieFatherFather(40))
+                    .append("svg:rect")
+                    .attr("width", "100%")
+                    .attr("height", "100%")
+                    .attr("stroke", "#000")
+                    .attr("stroke-width", 2)
+                    .attr("fill", "none")
+
+                function face_factory(classname, data, x, y) {
+                    //data format
+                    //{ "x": 0 - 1 , "y": 0 -1, "z": 0-1, "w":0-1 }
+                    var r = 10 + data.w * 30;
+                    var face = d3.select("#charts")
+                        .append("svg:g")
+                        //.data([data.sort(d3.descending)])
+                        //.data([data])
+                        .attr("class", classname)
+                        .attr("transform", "translate(" + x + "," + y + ")");
+
+                    // console.log("make head");
+                    var head_color = d3.scale.threshold()
+                        .domain([0, 0.8, 1])
+                        .range(["#ffffff", "#ff0000", "#0000ff"]);
+
+                    var head = face.append("svg:circle")
+                        .attr("class", "head")
+                        .attr("fill", function(d) {
+                            return head_color(data.x);
+                        })
+                        .attr("fill-opacity", .3)
+                        .attr("stroke", "#000")
+                        .attr("stroke-width", 2)
+                        .attr("r", r);
+
+                    // console.log("make mouth");
+                    var mouth_x = [0, .5, 1];
+
+                    var mouth_x_range = d3.scale.linear()
+                        .domain([0, 1])
+                        .range([-r / 2, r / 2]);
+
+
+                    var mouth_y_range = d3.scale.linear()
+                        .domain([0, 1])
+                        .range([-r / 2, r / 2]);
+
+                    var mouth_y = [.5, data.y, .5];
+                    // console.log(mouth_y)
+
+                    var mouth_line = d3.svg.line()
+                        .x(function(d, i) {
+                            return mouth_x_range(mouth_x[i]);
+                        })
+                        .y(function(d, i) {
+                            return mouth_y_range(mouth_y[i]);
+                        })
+                        .interpolate("basis");
+
+                    var mouth = face.append("svg:path")
+                        .attr("class", "mouth")
+                        .attr("stroke", "#000")
+                        .attr("stroke-width", 2)
+                        .attr("fill", "none")
+                        .attr("transform", "translate(" + [0, r / 3] + ")")
+                        .attr("d", mouth_line(mouth_x));
+
+                    // console.log("create eyes")
+                    var eyer = r / 10 + data.z * (r / 3);
+                    // console.log(eyer);
+                    var left_eye = face.append("svg:circle")
+                        .attr("class", "eyes")
+                        .attr("stroke", "#000")
+                        .attr("fill", "none")
+                        .attr("stroke-width", 2)
+                        .attr("transform", "translate(" + [-r / 2.5, -r / 3] + ")")
+                        .attr("r", eyer);
+
+                    //eyer = r/10 + data.w * (r/3);
+                    var right_eye = face.append("svg:circle")
+                        .attr("class", "eyes")
+                        .attr("stroke", "#000")
+                        .attr("fill", "none")
+                        .attr("stroke-width", 2)
+                        .attr("transform", "translate(" + [r / 2.5, -r / 3] + ")")
+                        .attr("r", eyer);
+                }
+
+                function clickypie(yz) {
+                    count = 0
+                        // var xy = d3.svg.mouse(this);
+                    var xy = yz;
+                    for (i = 0; i < 13; i++) {
+                        if (i < 12) {
+                            count += 1;
+                            x = xy[0] + i * 40;
+                            y = xy[1];
+                            //var r = 20 + Math.random() * 50;
+                            //var r = 70;
+                            //var data = d3.range(10).map(Math.random)
+                            var data = {
+                                "x": 0.9,
+                                "y": 0.8,
+                                "z": 0.2,
+                                "w": 0.3
+                            };
+                            // console.log("The data is : " + data);
+                            face_factory("face" + count, data, x, y);
+                        } else {
+                            count += 1;
+                            x = xy[0] + i * 40;
+                            y = xy[1];
+                            //var r = 20 + Math.random() * 50;
+                            //var r = 70;
+                            //var data = d3.range(10).map(Math.random)
+                            var data = {
+                                "x": 0.7,
+                                "y": 0.2,
+                                "z": 0.2,
+                                "w": 0.3
+                            };
+                            // console.log("The data is : " + data);
+                            face_factory("face" + count, data, x, y);
+                        }
+                    };
+
+                };
+
+                function clickypieFather(x) {
+                    if (x < 400) {
+                        for (i = 0; i < 50; i++) {
+                            if ((40 + (i * 40)) < 250) {
+                                setTimeout(clickypie, 10 * x + (i * 2500), [x, 50 + (i * 50)])
+                            } else {
+                                return true;
+                            }
+                        }
+                    } else {
+                        return false;
+                    }
+                }
+
+                function clickypieFatherFather(v) {
+                    if (clickypieFather(v)) {
+                        return false;
+                    }
+                }
+            </script>
+        </div>
+
+        <div>
+            <hr>
+        </div>
+
+        <div class="row">
+            <div style="font-size: 175%">
+                <p>The following interactive visualizaiton dashboard shows 4 visualizations. One visualization is the pie chart which compares the number of complaints made by the customers.</p>
+                <p>The companies with the largest number of complaints are sortlisted and a visualization is made to compare the complaints of these companiesalong with the other companies. </p>
+                <p>The third Visualization shows the number of complaints filtered upon states. This particular visualization can be used to get deep insights about the performance of different sectors and different companies.</p>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 50px;">
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="chart-ring-year" style="margin-right: 100px;">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div id="barChart"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 10px;margin-bottom: 10px; font-size: 120%">
+            <div class="col-md-6">
+                <p style="font-size: 150%">Visualization(1). Number of complaints made on products.</p>
+            </div>
+            <div class="col-md-6">
+                <p style="font-size: 150%">Visualization(2). Top contenders in number of complaints.</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="dcJsUsaMap2" style="margin-top: 50px;"></div>
+
+                </div>
+
+                <div class="col-md-6" style="margin-top: 100px; margin-bottom: 100px;">
+                    <div id="dcJsUsaMap"></div>
+
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 10px;margin-bottom: 10px;font-size: 120%;">
+            <div class="col-md-6">
+                <p style="font-size: 150%">Visualization(3).Number of complaints made in each state.</p>
+            </div>
+            <div class="col-md-6">
+                <p style="font-size: 150%">Visualization(4).Sentiments of complaints from each state.</p>
+            </div>
+        </div>
+
+        <div>
+            <hr>
+        </div>
+
+        <div class="row" style="font-size: 175%">
+            <div class="col-md-8">
+                <h2>Inferences from the Visualizations. </h2>
+                <p>It can be observed that the banks and the financial services are lacking in the following areas: Mortagage, Debt collection, Credit reporting, and credit card. </p>
+                <ul>
+                    <li>It can be observed that the number of complaints are more in California, Florida and Texas relative to the other states.</li>
+                    <li>It can be observed from the histogram that the number of complaints combined in the 6 companies is close to the complaints obtained on all the remaining companies. There are in total 5000 companies approximately.</li>
+                    <li>When it comes to the credit reporting, there is more negative sentiment compared to the other product complaints. This tells the lacking in the credit reporting department of the Financial institutions in USA.</li>
+                    <li>So, sentiments and the number of complaints can be observed through the entire USA statewise with interaction of the choropleths.</li>
+                    <li>Multiple analysis can be done with the above dashboard with some additional information. For example, with a dataset of workforce distribution of companies, we can check whether there is any correlation between the workforce distribution
+                        and the sentiments of customers.</li>
+
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <p style="font-size: 125%">This analysis is very broad which spans over the entire financial sector. So an additional webpage is done to visualize the dataset company wise. 5 famous companies in USA are selected and a Visualization dashboard is done.</p>
+                <a href="http://128.119.243.147:5000/secondPage ">
+                    <button id="nextPage " style="margin-bottom: 100px;width: 400px;height: 65px;font-size: 150%;background-color: #3b5998;color: #ffffff">Analysis of companies. Click Me</button>
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script src="js/libs/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="bootstrap.css" />
+    <script src="oldD3.js"></script>
+    <script src="header.js"></script>
+    <script src="crossfilter.js"></script>
+    <script src="dc2.js"></script>
+    <script src="FileSaver.js"></script>
+    <script src="fbPieHist2.js"></script>
+</body>
+
+</html>

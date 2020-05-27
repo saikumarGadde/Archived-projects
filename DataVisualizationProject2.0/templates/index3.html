@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width = device-width, initial-scale = 1">
+    <title> Data Visualization Project </title>
+    <link rel="stylesheet" type="text/css" href="bootstrapNew.css">
+    <link rel="stylesheet" type="text/css" href="dc.css" />
+    <link rel="stylesheet" type="text/css" href="main.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+    <script src="usa.js"></script>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js?2.3.0"></script>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.layout.js?2.3.0"></script>
+    <script type="text/javascript" src="d3.layout.cloud.js"></script>
+</head>
+
+<body>
+    <div class="container-fluid" style="margin-left: 150px;margin-right: 150px;">
+        <div class="row">
+            <div class="col-md-12" style="margin-top: 25px;">
+                <h1>Visualization Board 2 (Interactive)</h1>
+                <p style="font-size: 175%">This helps in understanding the customers requirements and complaints and helping them accordingly. </p>
+            </div>
+        </div>
+
+        <div>
+            <hr>
+        </div>
+
+        <div class="row">
+            <p style="font-size: 175%">As the number of financial institutions are increasing day by day, and as the number of customers to the financial institutions are increasing day by day, the need for monitoring them has come. We can include a small visualization here about
+                the incresing number of financial institutions.
+            </p>
+            <p style="font-size: 175%">
+                Taken from the Occupational Outlook handbook from US bureau of labour statistics. Customr service agents Customer service agents usually recieve short term on-the-job training, lasting 2 to 3 weeks. Those who work in finance and insurance may need several
+                months of training to learn more complicated financial regulations. General customer service training may focus on procedures for answering questions, information about a companys products and services, and computer and telephone use.Trainees
+                often work under the guidance of an experienced worker for the first few weeks of employment.
+            </p>
+        </div>
+
+        <div class="dropdown">
+            <h2 style="font-size: 175%;">The following companies are considered for analysis on this dashboard:</h2>
+            <div class="col-md-12" style="margin-top: 10px">
+                <p style="font-size: 175%; font-style:  italic"> Please select one company</p>
+                <ul style="font-style: italic;font-size: 200%;">
+                    <li>Bank of America</li>
+                    <li>Morgan Stanley</li>
+                    <li>Capital One</li>
+                    <li>Wells Fargo</li>
+                    <li>JPMorgan Chase</li>
+                </ul>
+            </div>
+
+            <select name="Select Company" id="CompanySelected" onchange="myFunc()">
+			<option value="0">Please select company here</option>
+            <option value="1">Bank of America</option>
+			<option value="2">Morgan Stanley</option>
+			<option value="3">Capital One</option>
+            <option value="4">wells fargo</option>
+            <option value="5">jpmorgan</option>
+		</select>
+        </div>
+
+        <div>
+            <hr>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h2 class="font-italic">Product wise distribution of complaints. </h2>
+                <div id="companyBarChart"></div>
+            </div>
+            <div class="col-md-6">
+                <div>
+                    <p style="font-size: 170%;padding-left: 45px;margin-top: 30px;">Companies should be aware of the kind of complaints they get from their customers. For example Bank of america has more number of complaints from the Mortagage customers and the Bank account and service customers. This is the area
+                        in which the Bank of america can improve their services. </p>
+                    <p style="font-size: 170%;padding-left: 45px;margin-top: 30px;">In the above way many conclusions can be drawn for each company. </p>
+                </div>
+            </div>
+        </div>
+        <div>
+            <hr>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6" style="margin-top: 50px; margin-bottom: 50px;">
+                <h2 style="font-style: italic">Sentiments choropleth </h2>
+                <div id="dcJsUsaMap3"></div>
+            </div>
+
+            <div class="col-md-6" style="margin-top: 50px;margin-bottom: 50px;">
+                <h2 style="font-style: italic">Number of complaints made from each state.</h2>
+                <div id="dcJsUsaMap4"></div>
+            </div>
+
+            <div class="col-md-12" style="margin-top: 50px;margin-bottom: 50px;">
+
+                <h2 style="font-style: italic">Distribution of banks branches across the states in USA. </h2>
+                <div id="dcJsUsaMap2"></div>
+            </div>
+        </div>
+
+        <div>
+            <hr>
+        </div>
+
+        <div class="row" style="margin-bottom: 100px;">
+
+            <div class="col-md-12">
+                <h2 style="font-style: italic;font-weight: 150%;">Word cloud to represent the most frequent words from the complaints.</h2>
+                <p style="font-size: 175%">Word clouds (also known as text clouds or tag clouds) work in a simple way: the more a specific word appears in a source of textual data (such as a speech, blog post, or database), the bigger and bolder it appears in the word cloud.</p>
+                <p style="font-size: 175%">Word clouds helps in obtaining the gist of the text without the need to read the full text or the complaint. </p>
+                <div id="word_cloud"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/libs/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="bootstrap.css" />
+    <script src="oldD3.js"></script>
+    <script src="header.js"></script>
+    <script src="crossfilter.js"></script>
+    <script src="dc2.js"></script>
+    <script src="FileSaver.js"></script>
+    <script src="d3.layout.cloud.js"></script>
+    <script>
+        function myFunc() {
+            jQuery.getScript("Maps.js");
+        }
+    </script>
+
+    <!--<script type="text/javascript">
+        function myFunc() {
+            console.log("Submit button is clicked")
+            $('<link>', {
+                rel: 'stylesheet',
+                type: 'text/css',
+                href: 'bootstrap.css'
+            }).appendTo('#head');
+
+            jQuery.getScript("oldD3.js");
+            jQuery.getScript("header.js");
+            jQuery.getScript("crossfilter.js");
+            jQuery.getScript("dc2.js");
+            jQuery.getScript("FileSaver.js");
+            // jQuery.getScript("");
+            jQuery.getScript("d3.layout.cloud.js");
+            jQuery.getScript("Maps.js");
+        };
+        // window.onload = myFunc;
+    </script>-->
+
+</body>
+
+</html>
